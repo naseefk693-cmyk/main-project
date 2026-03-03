@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="row justify-content-center mt-5">
+    <div class="col-md-4 text-center">
+        <div class="card p-4">
+            <h4 class="text-primary">Verify Pickup</h4>
+            <p class="small text-muted">Enter the 8-character ID provided by the donor.</p>
+            {% if error %}<div class="alert alert-danger">{{ error }}</div>{% endif %}
+            <form method="POST">
+                {% csrf_token %}
+                <input type="text" name="code" class="form-control form-control-lg mb-3 text-center fw-bold" placeholder="X1Y2Z3A4" required>
+                <button type="submit" class="btn btn-primary w-100">Complete Transfer</button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

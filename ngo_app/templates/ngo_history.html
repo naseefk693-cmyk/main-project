@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+{% block title %}NGO History | ECO-FEED{% endblock %}
+{% block content %}
+<h2 class="mb-4">NGO Collection Records</h2>
+<div class="row">
+  {% for claim in claims %}
+  <div class="col-md-6 mb-3">
+    <div class="card border-start border-4 {% if claim.status == 'Collected' %}border-secondary{% else %}border-warning{% endif %}">
+      <div class="card-body">
+        <div class="d-flex justify-content-between">
+          <h5 class="card-title">{{ claim.food_type }}</h5>
+          <span class="badge {% if claim.status == 'Collected' %}bg-secondary{% else %}bg-warning text-dark{% endif %}">
+            {{ claim.status }}
+          </span>
+        </div>
+        <p class="mb-1"><strong>Donor:</strong> {{ claim.donor.username }}</p>
+        <p class="mb-1"><strong>Quantity:</strong> {{ claim.quantity }}</p>
+        <p class="mb-1"><strong>Donation ID:</strong> {{ claim.donation_id|stringformat:"s" }}</p>
+        {% if claim.claimed_at %}
+          <p class="mb-1"><strong>Claimed At:</strong> {{ claim.claimed_at|date:"M d, Y H:i" }}</p>
+        {% endif %}
+        {% if claim.collected_at %}
+          <p class="mb-1"><strong>Collected At:</strong> {{ claim.collected_at|date:"M d, Y H:i" }}</p>
+        {% endif %}
+        {% if claim.status == "Claimed" %}
+          <a href="{% url 'verify_pickup' %}" class="btn btn-success btn-sm mt-2">Verify Pickup</a>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+  {% empty %}
+  <p class="text-muted text-center">No claims yet.</p>
+  {% endfor %}
+</div>
+{% endblock %}

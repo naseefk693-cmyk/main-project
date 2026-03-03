@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+{% block title %}Edit Donation | ECO-FEED{% endblock %}
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-md-6">
+    <div class="card shadow-lg p-4">
+      <h3 class="text-success fw-bold mb-3">Edit Donation</h3>
+      <form method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+        <div class="mb-3">
+          <label class="form-label">Food Type</label>
+          <input type="text" name="food_type" class="form-control" value="{{ donation.food_type }}" required>
+        </div>
+        <div class="mb-3">
+          <label class="form-label">Quantity</label>
+          <input type="text" name="quantity" class="form-control" value="{{ donation.quantity }}" required>
+        </div>
+        <div class="mb-3">
+          <label class="form-label">Expiry Date & Time</label>
+          <input type="datetime-local" name="expiry_time" class="form-control" value="{{ donation.expiry_time|date:'Y-m-d\\TH:i' }}" required>
+        </div>
+        <div class="mb-3">
+          <label class="form-label">Food Image</label>
+          <input type="file" name="image"

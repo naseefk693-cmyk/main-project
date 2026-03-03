@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+{% block title %}Donation Details | ECO-FEED{% endblock %}
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-md-6">
+    <div class="card shadow-lg">
+      {% if donation.image %}
+        <img src="{{ donation.image.url }}" class="card-img-top" style="height:250px;object-fit:cover;">
+      {% endif %}
+      <div class="card-body">
+        <h3 class="fw-bold text-success">{{ donation.food_type }}</h3>
+        <p><strong>Quantity:</strong> {{ donation.quantity }}</p>
+        <p><strong>Expires in:</strong> {{ donation.expiry_time|timeuntil }}</p>
+        <p><strong>Status:</strong> {{ donation.status }}</p>
+        {% if donation.status == "Available" %}
+          <a href="{% url 'claim_food' donation.id %}" class="btn btn-success w-100">
+            <i class="fas fa-hand-holding-heart"></i> Claim this Food
+          </a>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,254 @@
+{% extends 'base.html' %}
+
+{% block extra_css %}
+<style>
+    body {
+        background-color: #f4f9f4;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        color: #333;
+    }
+
+    .hero-bg {
+        background: linear-gradient(rgba(27, 241, 3, 0.5), rgba(8, 238, 16, 0.5)),
+                    url('/static/images/food-hero.jpg') center/cover no-repeat;
+        padding: 120px 0;
+        color: #fff;
+        text-shadow: 1px 1px 4px rgba(0,0,0,0.5);
+    }
+
+    .hero-bg h1 {
+        font-size: 3.5rem;
+    }
+
+    .hero-bg p {
+        font-size: 1.5rem;
+    }
+
+    .card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 20px rgba(0,0,0,0.15);
+        transition: all 0.3s ease;
+    }
+
+    h2, h3, h4, h5 {
+        color: #2e7d32;
+    }
+
+    .status-badge {
+        font-weight: bold;
+        font-size: 0.85rem;
+    }
+
+    .btn-success {
+        background-color: #2e7d32;
+        border: none;
+        transition: 0.3s;
+    }
+
+    .btn-success:hover {
+        background-color: #1b5e20;
+    }
+
+    .bg-light-custom {
+        background-color: #ffffffcc;
+        padding: 40px;
+        border-radius: 20px;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    }
+
+    .icon-section i {
+        color: #2e7d32;
+        margin-bottom: 15px;
+        transition: 0.3s;
+    }
+
+    .icon-section i:hover {
+        color: #1b5e20;
+        transform: scale(1.2);
+    }
+
+    .claim-btn {
+        width: 100%;
+        font-weight: bold;
+    }
+
+</style>
+{% endblock %}
+
+{% block hero %}
+<div class="hero-bg mb-5 text-center">
+    <div class="container">
+        <h1 class="fw-bold">ECO-FEED</h1>
+        <p class="lead">Reducing food waste by connecting donors with local NGOs instantly.</p>
+        <a href="{% url 'register' %}" class="btn btn-light btn-lg mt-3">Join Now</a>
+    </div>
+</div>
+{% endblock %}
+
+{% block content %}
+<!-- Purpose / Mission -->
+<div class="row mb-5 align-items-center bg-light-custom">
+    <div class="col-md-6 mb-3 mb-md-0">
+        <img src="https://c8.alamy.com/comp/2BM088B/food-and-meal-donation-app-on-a-smartphone-volunteering-and-charity-concept-2BM088B.jpg"
+             class="img-fluid rounded shadow" alt="Mission">
+    </div>
+    <div class="col-md-6">
+        <h2 class="fw-bold">Our Purpose</h2>
+        <p>We connect donors and NGOs to ensure surplus food reaches those who need it most. Our goal is to minimize food waste while fighting hunger.</p>
+        <p>Every donation counts and every meal delivered matters.</p>
+    </div>
+</div>
+
+<!-- How It Works -->
+<div class="row mb-5 text-center icon-section">
+    <h2 class="fw-bold mb-4">How ECO-FEED Works</h2>
+    <div class="col-md-4 mb-4">
+        <i class="fas fa-utensils fa-3x"></i>
+        <h5 class="fw-bold mt-2">Post Food</h5>
+        <p>Donors share details about surplus food and location.</p>
+    </div>
+    <div class="col-md-4 mb-4">
+        <i class="fas fa-hand-holding-heart fa-3x"></i>
+        <h5 class="fw-bold mt-2">Claim Donation</h5>
+        <p>NGOs view nearby donations and claim what they can pick up in time.</p>
+    </div>
+    <div class="col-md-4 mb-4">
+        <i class="fas fa-truck fa-3x"></i>
+        <h5 class="fw-bold mt-2">Deliver & Serve</h5>
+        <p>The food is collected and delivered to those in need efficiently.</p>
+    </div>
+</div>
+
+<!-- Available Donations -->
+<div class="row mb-4">
+    <div class="col-12 mb-4">
+        <h3 class="fw-bold border-bottom pb-2">Available Food Donations</h3>
+    </div>
+
+    {% for donation in donations %}
+    <div class="col-md-4 mb-4">
+        <div class="card shadow-sm h-100">
+            {% if donation.image %}
+                <img src="{{ donation.image.url }}" class="card-img-top" style="height: 200px; object-fit: cover;">
+            {% endif %}
+            <div class="card-body text-center">
+                <h5 class="fw-bold">{{ donation.food_type }}</h5>
+                <p class="text-muted small">Quantity: {{ donation.quantity }}</p>
+                <p class="text-muted small">Address: {{ donation.donor.userprofile.address }}</p>
+                <span class="badge bg-success status-badge">{{ donation.status }}</span>
+
+                {% if user.is_authenticated %}
+                    {% if user.userprofile.role == 'ngo' and donation.status == 'Available' %}
+                        <a href="{% url 'claim_donation' donation.donation_id %}" class="btn btn-success btn-sm mt-2 claim-btn">Claim</a>
+                    {% endif %}
+                {% else %}
+                    {% if donation.status == 'Available' %}
+                        <a href="{% url 'register' %}" class="btn btn-success btn-sm mt-2 claim-btn">Register as NGO to Claim</a>
+                    {% endif %}
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    {% empty %}
+    <div class="text-center py-5">
+        <p class="text-muted fst-italic">No active donations. Check back later!</p>
+    </div>
+    {% endfor %}
+</div>
+<hr class="my-5">
+
+<!-- Call-to-action for Donors -->
+<div class="row mt-5 mb-5">
+    <div class="col-12 text-center p-5 bg-success text-white shadow-sm rounded-4">
+        <h4 class="fw-bold">Are you a Donor?</h4>
+        <p>Your surplus food can save lives today.</p>
+        <a href="{% url 'create_donation' %}" class="btn btn-light btn-lg">Post a Donation</a>
+    </div>
+</div>
+
+{% if user.is_authenticated and user.userprofile.role == 'ngo' %}
+<div class="row mb-4">
+    <div class="col-12 text-end">
+        <a href="{% url 'upload_ngo_media' %}" class="btn btn-success">
+            Upload NGO Media
+        </a>
+    </div>
+</div>
+{% endif %}
+
+
+<hr class="my-5">
+
+<!-- NGO Media Section -->
+<div class="row mb-5">
+    {% for media in ngo_media %}
+    <div class="col-md-4 mb-4">
+        <div class="card shadow-sm h-100">
+            {% if media.image %}
+            <img src="{{ media.image.url }}" class="card-img-top" style="height:200px;object-fit:cover;">
+            {% endif %}
+            {% if media.video %}
+            <video controls class="w-100">
+                <source src="{{ media.video.url }}" type="video/mp4">
+            </video>
+            {% endif %}
+            <div class="card-body">
+                <h5 class="fw-bold">{{ media.ngo.name }}</h5>
+                <p class="text-muted small">{{ media.caption }}</p>
+            </div>
+        </div>
+    </div>
+    {% empty %}
+    <p class="text-center fst-italic">No NGO media uploaded yet.</p>
+    {% endfor %}
+</div>
+
+
+
+<hr class="my-5">
+
+<div class="row mb-5">
+    <!-- Messages Form -->
+    <div class="col-lg-6 col-md-12 mb-4">
+        <div class="p-4 bg-light-custom rounded shadow-sm h-100">
+            <h3 class="fw-bold mb-3">Send Us a Message</h3>
+            <form method="post">
+                {% csrf_token %}
+                {{ message_form.as_p }}
+                <button type="submit" name="message-submit" class="btn btn-success w-100">Send Message</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Reviews Form -->
+    <div class="col-lg-6 col-md-12 mb-4">
+        <div class="p-4 bg-light-custom rounded shadow-sm h-100">
+            <h3 class="fw-bold mb-3">Leave a Review</h3>
+            <form method="post">
+                {% csrf_token %}
+                {{ review_form.as_p }}
+                <button type="submit" name="review-submit" class="btn btn-success w-100">Submit Review</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+<!-- Display Reviews -->
+<div class="row mb-5">
+    <div class="col-12">
+        <h3 class="fw-bold mb-3">Visitor Reviews</h3>
+        {% for review in reviews %}
+        <div class="p-3 mb-3 rounded shadow-sm bg-white">
+            <p><strong>{{ review.name }}</strong> rated: {{ review.rating }}/5</p>
+            <p>{{ review.comment }}</p>
+            <small class="text-muted">{{ review.submitted_at|date:"M d, Y H:i" }}</small>
+        </div>
+        {% empty %}
+        <p class="text-muted fst-italic">No reviews yet. Be the first to review!</p>
+        {% endfor %}
+    </div>
+</div>
+
+
+{% endblock %}
