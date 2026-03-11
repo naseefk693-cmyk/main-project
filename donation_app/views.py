@@ -1,6 +1,6 @@
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect, get_object_or_404
-from .models import FoodDonation
+from .models import FoodDonation, DonationMessage
 from django.utils import timezone
 from django.contrib import messages
 
@@ -32,5 +32,19 @@ def verify_pickup(request):
 
 
 def donation_detail(request, donation_id):
-    donation = get_object_or_404(FoodDonation, id=donation_id)
-    return render(request, 'donation_detail.html', {'donation': donation})
+    donation = get_object_or_404(FoodDonation, donation_id=donation_id)
+    msgs = DonationMessage.objects.filter(donation=donation).order_by('created_at')
+
+    # handle sending new message
+    if request.method == 'POST' and request.user.is_authenticated:
+        # only donor or claiming NGO can message
+        if request.user == donation.donor or request.user == donation.ngo:
+            body = request.POST.get('body', '').strip()
+            if body:
+                DonationMessage.objects.create(
+                    donation=donation,
+                    sender=request.user,
+                    text=body
+                )
+                return redirect('donation_detail', donation_id=donation_id)
+    return render(request, 'donation_detail.html', {'donation': donation, 'messages_list': msgs})

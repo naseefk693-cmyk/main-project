@@ -137,9 +137,10 @@
                 <p class="text-muted small">Address: {{ donation.donor.userprofile.address }}</p>
                 <span class="badge bg-success status-badge">{{ donation.status }}</span>
 
+                <a href="{% url 'donation_detail' donation.donation_id %}" class="btn btn-outline-primary btn-sm mt-2">Details</a>
                 {% if user.is_authenticated %}
                     {% if user.userprofile.role == 'ngo' and donation.status == 'Available' %}
-                        <a href="{% url 'claim_donation' donation.donation_id %}" class="btn btn-success btn-sm mt-2 claim-btn">Claim</a>
+                        <a href="{% url 'donation_detail' donation.donation_id %}" class="btn btn-success btn-sm mt-2 claim-btn">Claim</a>
                     {% endif %}
                 {% else %}
                     {% if donation.status == 'Available' %}

@@ -22,3 +22,14 @@
         <div class="mb-3">
           <label class="form-label">Food Image</label>
           <input type="file" name="image"
+                  class="form-control" accept="image/*">
+            {% if donation.image %}
+              <img src="{{ donation.image.url }}" alt="Food Image" class="img-thumbnail mt-2" style="max-width: 200px;">
+            {% endif %}
+        </div>
+        <button type="submit" class="btn btn-success w-100">Update Donation</button>
+      </form> 
+    </div>
+  </div>
+</div>
+{% endblock %}

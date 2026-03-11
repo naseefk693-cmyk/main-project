@@ -21,7 +21,7 @@ from uuid import UUID
 urlpatterns = [
     path('', views.index_view, name='index'),
     path('create/', views.create_donation, name='create_donation'),
-    path('edit/<int:donation_id>/', views.edit_donation, name='edit_donation'),
+    path('edit/<uuid:donation_id>/', views.edit_donation, name='edit_donation'),
     path('history/', views.donor_history, name='donor_history'),
     path('register/', views.register_view, name='register'),
     path('login/', views.login_view, name='login'),

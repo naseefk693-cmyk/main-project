@@ -16,12 +16,58 @@ def browse_food(request):
 
 def claim_food(request, donation_id):
     item = get_object_or_404(FoodDonation, donation_id=donation_id)
-    if item.status == 'Available':
-        item.status = 'Claimed'
-        item.ngo = request.user
-        item.claimed_at = timezone.now()  # optional, if you track claim time
-        item.save()
-    return redirect('ngo_history')
+    # only allow NGO to claim
+    if not request.user.is_authenticated or request.user.userprofile.role != 'ngo':
+        messages.error(request, "Only NGOs can claim donations.")
+        return redirect('donation_detail', donation_id=donation_id)
+
+    if request.method == 'POST':
+        # handle quantity
+        qty_str = request.POST.get('quantity', '').strip()
+        try:
+            qty = float(qty_str)
+        except (ValueError, TypeError):
+            messages.error(request, "Invalid quantity provided.")
+            return redirect('donation_detail', donation_id=donation_id)
+
+        try:
+            available = float(item.quantity)
+        except Exception:
+            # if quantity isn't numeric, fall back to claiming whole item
+            qty = available = None
+
+        if available is not None:
+            if qty <= 0 or qty > available:
+                messages.error(request, "Please enter a valid amount not exceeding available quantity.")
+                return redirect('donation_detail', donation_id=donation_id)
+
+        # perform claim
+        if available is None or qty == available:
+            # full claim
+            if item.status == 'Available':
+                item.status = 'Claimed'
+                item.ngo = request.user
+                item.claimed_at = timezone.now()
+                item.save()
+        else:
+            # partial claim; reduce original and create new claimed record
+            remaining = available - qty
+            item.quantity = str(int(remaining) if remaining.is_integer() else remaining)
+            item.save()
+            FoodDonation.objects.create(
+                donor=item.donor,
+                ngo=request.user,
+                food_type=item.food_type,
+                quantity=str(int(qty) if float(qty).is_integer() else qty),
+                expiry_time=item.expiry_time,
+                image=item.image,
+                status='Claimed',
+            )
+        messages.success(request, "Donation claimed successfully!")
+        return redirect('ngo_history')
+    else:
+        # GET always redirect to detail page where form lives
+        return redirect('donation_detail', donation_id=donation_id)
 
 def ngo_history(request):
     claims = FoodDonation.objects.filter(ngo=request.user)

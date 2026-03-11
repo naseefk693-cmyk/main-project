@@ -20,5 +20,18 @@ from . import views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('admin/dashboard/', views.admin_dashboard, name='admin_dashboard'),
+    path('admin_dashboard/', views.admin_dashboard, name='admin_dashboard'),
+    path('delete_donation/<uuid:donation_id>/', views.delete_donation, name='delete_donation'),
+    path('delete_user/<int:user_id>/', views.delete_user, name='delete_user'),
+    path('edit_donation/<uuid:donation_id>/', views.edit_donation, name='edit_donation'),
+    path('edit_user/<int:user_id>/', views.edit_user, name='edit_user'),
+    path('view_donation/<uuid:donation_id>/', views.view_donation, name='view_donation'),
+    path('view_user/<int:user_id>/', views.view_user, name='view_user'),
+    path('search_donations/', views.search_donations, name='search_donations'),
+    path('search_users/', views.search_users, name='search_users'),
+    path('filter_donations/', views.filter_donations, name='filter_donations'),
+    path('filter_users/', views.filter_users, name='filter_users'),
+    path('sort_donations/', views.sort_donations, name='sort_donations'),
+    path('sort_users/', views.sort_users, name='sort_users'),
+    path('delete_media/<int:media_id>/', views.delete_media, name='delete_media'),
 ]

@@ -8,7 +8,7 @@
     <div class="card border-start border-4 {% if claim.status == 'Collected' %}border-secondary{% else %}border-warning{% endif %}">
       <div class="card-body">
         <div class="d-flex justify-content-between">
-          <h5 class="card-title">{{ claim.food_type }}</h5>
+          <h5 class="card-title"><a href="{% url 'donation_detail' claim.donation_id %}">{{ claim.food_type }}</a></h5>
           <span class="badge {% if claim.status == 'Collected' %}bg-secondary{% else %}bg-warning text-dark{% endif %}">
             {{ claim.status }}
           </span>

@@ -6,6 +6,7 @@ from django.contrib import messages
 from django.utils import timezone
 from .models import UserProfile
 from donation_app.models import FoodDonation
+from admin_app.views import admin_dashboard
 
 # # Index (public)
 # def index_view(request):
@@ -80,20 +81,50 @@ def register_view(request):
     return render(request, 'register.html')
 
 # Login
+# def login_view(request):
+#     if request.method == "POST":
+#         u = request.POST['username']
+#         p = request.POST['password']
+#         user = authenticate(username=u, password=p)
+#         if user is not None:
+#             login(request, user)
+#             profile = UserProfile.objects.get(user=user)
+#             if profile.role == 'donor':
+#                 return redirect('donor_history')
+#             else:
+#                 return redirect('browse_food')
+#         else:
+#             messages.error(request, "Invalid username or password.")
+#     return render(request, 'login.html')
+
+from django.contrib.auth.models import User
+
 def login_view(request):
     if request.method == "POST":
         u = request.POST['username']
         p = request.POST['password']
         user = authenticate(username=u, password=p)
+
         if user is not None:
             login(request, user)
-            profile = UserProfile.objects.get(user=user)
-            if profile.role == 'donor':
-                return redirect('donor_history')
+
+            # If admin, go to admin dashboard
+            if user.is_superuser:
+                return redirect('admin_dashboard')
+
+            profile = UserProfile.objects.filter(user=user).first()
+
+            if profile:
+                if profile.role == 'donor':
+                    return redirect('donor_history')
+                else:
+                    return redirect('browse_food')
             else:
-                return redirect('browse_food')
+                messages.error(request, "User profile not found.")
+
         else:
             messages.error(request, "Invalid username or password.")
+
     return render(request, 'login.html')
 
 # Logout
@@ -154,25 +185,8 @@ def edit_profile(request):
 
 @login_required(login_url='/user/login/')
 def claim_donation(request, donation_id):
-    profile = request.user.userprofile
-    if profile.role != 'ngo':
-        messages.error(request, "Only NGOs can claim donations. Please register as an NGO.")
-        return redirect('register')
-
-    donation = get_object_or_404(FoodDonation, donation_id=donation_id)
-
-    if donation.status != "Available":
-        messages.warning(request, "This donation has already been claimed.")
-        return redirect('index')
-
-    # Mark as claimed
-    donation.status = "Claimed"
-    donation.claimed_by = request.user  # you may need to add this field in FoodDonation model
-    donation.claimed_at = timezone.now()
-    donation.save()
-
-    messages.success(request, "Donation claimed successfully!")
-    return redirect('index')
+    # simply redirect to the detail page where the NGO can specify quantity
+    return redirect('donation_detail', donation_id=donation_id)
 
 
 

@@ -45,7 +45,10 @@
               <a class="nav-link text-white me-3" href="{% url 'ngo_history' %}">My Claims</a>
               <a class="nav-link text-white me-3" href="{% url 'verify_pickup' %}">Verify Pickup</a>
               <a class="nav-link text-white me-3" href="{% url 'edit_profile' %}">Edit Profile</a>
+            {% elif profile.role == "admin" %}
+              <a class="nav-link text-white me-3" href="{% url 'admin_dashboard' %}">Admin Dashboard</a>
             {% endif %}
+            
           {% endwith %}
 
           {% if user.is_staff %}

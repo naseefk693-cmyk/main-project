@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+
+{% block title %}Edit User | ECO-FEED{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-md-6">
+    <div class="card shadow-lg p-4">
+      <h3 class="text-success fw-bold mb-3">Edit User</h3>
+      <form method="POST">
+        {% csrf_token %}
+        <div class="mb-3">
+          <label class="form-label">Username</label>
+          <input type="text" name="username" class="form-control" value="{{ user.user.username }}" required>
+        </div>
+        <div class="mb-3">
+          <label class="form-label">Email</label>
+          <input type="email" name="email" class="form-control" value="{{ user.user.email }}" required>
+        </div>
+        <div class="mb-3">
+          <label class="form-label">Role</label>
+          <select name="role" class="form-control" required>
+            <option value="donor" {% if user.role == 'donor' %}selected{% endif %}>Donor</option>
+            <option value="ngo" {% if user.role == 'ngo' %}selected{% endif %}>NGO</option>
+          </select>
+        </div>
+        <button type="submit" class="btn btn-success w-100">Update User</button>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}

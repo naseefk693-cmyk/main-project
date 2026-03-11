@@ -27,5 +27,5 @@ urlpatterns = [
     path('user/', include('user_app.urls')),     
     path('ngo/', include('ngo_app.urls')),        
     path('donation/', include('donation_app.urls')),
-    path('admin/', include('admin_app.urls')), 
+    path('', include('admin_app.urls')), 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

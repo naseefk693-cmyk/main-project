@@ -19,5 +19,6 @@ from django.urls import path
 from . import views
 
 urlpatterns = [
+    path('<uuid:donation_id>/', views.donation_detail, name='donation_detail'),
     path('verify/', views.verify_pickup, name='verify_pickup'),
 ]

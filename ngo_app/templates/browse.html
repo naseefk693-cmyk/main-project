@@ -7,11 +7,13 @@
         <div class="card h-100 shadow-sm">
             <div class="card-body">
                 <span class="badge bg-info mb-2">Available</span>
-                <h5 class="card-title">{{ item.food_type }}</h5>
+                <h5 class="card-title">
+                  <a href="{% url 'donation_detail' item.donation_id %}">{{ item.food_type }}</a>
+                </h5>
                 <p class="text-muted mb-1"><strong>Quantity:</strong> {{ item.quantity }}</p>
                 <p class="text-danger small"><strong>Expires in:</strong> {{ item.expiry_time|timeuntil }}</p>
                 <hr>
-                <a href="{% url 'claim_food' item.donation_id %}" class="btn btn-outline-success w-100">Claim this Food</a>
+                <a href="{% url 'donation_detail' item.donation_id %}" class="btn btn-outline-success w-100">Claim this Food</a>
             </div>
         </div>
     </div>
