@@ -53,32 +53,21 @@ def index_view(request):
 
 # Register
 def register_view(request):
+    from .forms import RegistrationForm
     if request.method == "POST":
-        data = request.POST
-        if data['password'] != data['confirm_password']:
-            messages.error(request, "Passwords do not match!")
-            return render(request, 'register.html')
-        if User.objects.filter(username=data['username']).exists():
-            messages.error(request, "Username already taken.")
-            return render(request, 'register.html')
-        if User.objects.filter(email=data['email']).exists():
-            messages.error(request, "Email already registered.")
-            return render(request, 'register.html')
-
-        user = User.objects.create_user(
-            username=data['username'],
-            email=data['email'],
-            password=data['password']
-        )
-        UserProfile.objects.create(
-            user=user,
-            role=data['role'],
-            address=data.get('address', ''),
-            phone=data.get('phone', '')
-        )
-        login(request, user)
-        return redirect('index')
-    return render(request, 'register.html')
+        form = RegistrationForm(request.POST)
+        if form.is_valid():
+            user = form.save()
+            login(request, user)
+            messages.success(request, "Registration successful! Welcome to ECO-FEED.")
+            return redirect('index')
+        else:
+            for field, errors in form.errors.items():
+                for error in errors:
+                    messages.error(request, f"{field}: {error}")
+    else:
+        form = RegistrationForm()
+    return render(request, 'register.html', {'form': form})
 
 # Login
 # def login_view(request):
@@ -117,6 +106,8 @@ def login_view(request):
             if profile:
                 if profile.role == 'donor':
                     return redirect('donor_history')
+                elif profile.role == 'admin':
+                    return redirect('admin_dashboard')
                 else:
                     return redirect('browse_food')
             else:
@@ -136,6 +127,15 @@ def logout_view(request):
 # Donor: Create Donation
 @login_required(login_url='/user/login/')
 def create_donation(request):
+    try:
+        profile = request.user.userprofile
+        if profile.role != 'donor':
+            messages.error(request, "Only donors can create donations.")
+            return redirect('index')
+    except UserProfile.DoesNotExist:
+        messages.error(request, "User profile not found.")
+        return redirect('index')
+        
     if request.method == "POST":
         expiry = request.POST['expiry_time']
         donation =FoodDonation.objects.create(
@@ -152,6 +152,15 @@ def create_donation(request):
 # Donor: Edit Unclaimed Donation
 @login_required(login_url='/user/login/')
 def edit_donation(request, donation_id):
+    try:
+        profile = request.user.userprofile
+        if profile.role != 'donor':
+            messages.error(request, "Only donors can edit donations.")
+            return redirect('index')
+    except UserProfile.DoesNotExist:
+        messages.error(request, "User profile not found.")
+        return redirect('index')
+        
     donation = get_object_or_404(FoodDonation, id=donation_id, donor=request.user, status="Available")
     if request.method == "POST":
         donation.food_type = request.POST['food_type']
@@ -167,6 +176,15 @@ def edit_donation(request, donation_id):
 # Donor: History
 @login_required(login_url='/user/login/')
 def donor_history(request):
+    try:
+        profile = request.user.userprofile
+        if profile.role != 'donor':
+            messages.error(request, "Access denied.")
+            return redirect('index')
+    except UserProfile.DoesNotExist:
+        messages.error(request, "User profile not found.")
+        return redirect('index')
+        
     donations = FoodDonation.objects.filter(donor=request.user).order_by('-donation_id')
     return render(request, 'donor_history.html', {'donations': donations})
 

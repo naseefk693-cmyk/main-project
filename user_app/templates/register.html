@@ -18,56 +18,66 @@
                     <div class="row">
                         <div class="col-md-6 mb-3">
                             <label class="form-label fw-bold">Username</label>
-                            <input type="text" name="username" class="form-control" required>
+                            {{ form.username }}
+                            {% if form.username.errors %}
+                                <div class="text-danger small">{{ form.username.errors.0 }}</div>
+                            {% endif %}
                         </div>
                         <div class="col-md-6 mb-3">
                             <label class="form-label fw-bold">Email</label>
-                            <input type="email" name="email" class="form-control" required>
+                            {{ form.email }}
+                            {% if form.email.errors %}
+                                <div class="text-danger small">{{ form.email.errors.0 }}</div>
+                            {% endif %}
                         </div>
                     </div>
 
                     <div class="row">
                         <div class="col-md-6 mb-3">
                             <label class="form-label fw-bold">Password</label>
-                            <input type="password" name="password" class="form-control" required>
+                            {{ form.password }}
+                            {% if form.password.errors %}
+                                <div class="text-danger small">{{ form.password.errors.0 }}</div>
+                            {% endif %}
                         </div>
                         <div class="col-md-6 mb-3">
                             <label class="form-label fw-bold">Confirm Password</label>
-                            <input type="password" name="confirm_password" class="form-control" required>
+                            {{ form.confirm_password }}
+                            {% if form.confirm_password.errors %}
+                                <div class="text-danger small">{{ form.confirm_password.errors.0 }}</div>
+                            {% endif %}
                         </div>
                     </div>
 
                     <div class="mb-4">
                         <label class="form-label fw-bold">I am a:</label>
-                        <select name="role" class="form-select" required>
-                            <option value="donor">Donor (Restaurant/Individual)</option>
-                            <option value="ngo">NGO (Charity/Food Bank)</option>
-                            <option value="admin">Admin</option>
-                        </select>
+                        {{ form.role }}
+                        {% if form.role.errors %}
+                            <div class="text-danger small">{{ form.role.errors.0 }}</div>
+                        {% endif %}
                     </div>
 
                     <div class="mb-3">
                         <label class="form-label fw-bold">Phone Number</label>
-                        <input
-                        type="tel"
-                        name="phone"
-                        class="form-control"
-                        placeholder="+911234567890"
-                        required
-    >
+                        {{ form.phone }}
+                        {% if form.phone.errors %}
+                            <div class="text-danger small">{{ form.phone.errors.0 }}</div>
+                        {% endif %}
                     </div>
 
                     <div class="mb-4">
                         <label class="form-label fw-bold">Address</label>
-                        <textarea
-                        name="address"
-                        class="form-control"
-                        rows="3"
-                        placeholder="Enter your full address"
-                        required
-                        ></textarea>
+                        {{ form.address }}
+                        {% if form.address.errors %}
+                            <div class="text-danger small">{{ form.address.errors.0 }}</div>
+                        {% endif %}
                     </div>
 
+                    {% if form.non_field_errors %}
+                        <div class="alert alert-danger">
+                            {{ form.non_field_errors.0 }}
+                        </div>
+                    {% endif %}
 
                     <button type="submit" class="btn btn-success w-100 py-2">Create Account</button>
                 </form>

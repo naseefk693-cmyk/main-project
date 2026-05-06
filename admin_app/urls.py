@@ -19,7 +19,6 @@ from django.urls import path
 from . import views
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
     path('admin_dashboard/', views.admin_dashboard, name='admin_dashboard'),
     path('delete_donation/<uuid:donation_id>/', views.delete_donation, name='delete_donation'),
     path('delete_user/<int:user_id>/', views.delete_user, name='delete_user'),

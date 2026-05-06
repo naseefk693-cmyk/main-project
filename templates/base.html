@@ -35,21 +35,22 @@
             <i class="fas fa-user-circle me-1"></i>{{ user.username }}
           </span>
 
-          {% with user.userprofile as profile %}
-            {% if profile.role == "donor" %}
-              <a class="nav-link text-white me-3" href="{% url 'create_donation' %}">Post Donation</a>
-              <a class="nav-link text-white me-3" href="{% url 'donor_history' %}">My Donations</a>
-              <a class="nav-link text-white me-3" href="{% url 'edit_profile' %}">Edit Profile</a>
-            {% elif profile.role == "ngo" %}
-              <a class="nav-link text-white me-3" href="{% url 'browse_food' %}">Browse Food</a>
-              <a class="nav-link text-white me-3" href="{% url 'ngo_history' %}">My Claims</a>
-              <a class="nav-link text-white me-3" href="{% url 'verify_pickup' %}">Verify Pickup</a>
-              <a class="nav-link text-white me-3" href="{% url 'edit_profile' %}">Edit Profile</a>
-            {% elif profile.role == "admin" %}
-              <a class="nav-link text-white me-3" href="{% url 'admin_dashboard' %}">Admin Dashboard</a>
-            {% endif %}
-            
-          {% endwith %}
+          {% if user.userprofile %}
+            {% with user.userprofile as profile %}
+              {% if profile.role == "donor" %}
+                <a class="nav-link text-white me-3" href="{% url 'create_donation' %}">Post Donation</a>
+                <a class="nav-link text-white me-3" href="{% url 'donor_history' %}">My Donations</a>
+                <a class="nav-link text-white me-3" href="{% url 'edit_profile' %}">Edit Profile</a>
+              {% elif profile.role == "ngo" %}
+                <a class="nav-link text-white me-3" href="{% url 'browse_food' %}">Browse Food</a>
+                <a class="nav-link text-white me-3" href="{% url 'ngo_history' %}">My Claims</a>
+                <a class="nav-link text-white me-3" href="{% url 'verify_pickup' %}">Verify Pickup</a>
+                <a class="nav-link text-white me-3" href="{% url 'edit_profile' %}">Edit Profile</a>
+              {% elif profile.role == "admin" %}
+                <a class="nav-link text-white me-3" href="{% url 'admin_dashboard' %}">Admin Dashboard</a>
+              {% endif %}
+            {% endwith %}
+          {% endif %}
 
           {% if user.is_staff %}
             <a class="nav-link text-white me-3" href="{% url 'admin_dashboard' %}">Admin Dashboard</a>
